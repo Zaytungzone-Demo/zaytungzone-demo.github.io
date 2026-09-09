@@ -1,0 +1,23 @@
+{
+  "name": "zaytung-zone-menu",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "cf:dev": "wrangler pages dev --kv MENU_KV",
+    "cf:deploy": "wrangler pages deploy",
+    "kv:create": "wrangler kv namespace create MENU_KV"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "devDependencies": {
+    "wrangler": "^4.130.0"
+  }
+}

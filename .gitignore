@@ -1,0 +1,6 @@
+node_modules/
+*.log
+data/menu.json.tmp
+.env
+.dev.vars
+.wrangler/

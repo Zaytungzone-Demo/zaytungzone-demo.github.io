@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yönetim · Zaytung Zone</title>
+    <link rel="icon" href="/images/brand/zaytung-zone-logo.png" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <a class="admin-brand" href="/admin">
+          <img src="/images/brand/zaytung-zone-logo.png" alt="" width="42" height="42" />
+          <span><b>ZAYTUNG</b><em>CONTROL ROOM</em></span>
+        </a>
+        <div>
+          <a href="/" target="_blank" id="open-menu">Menüyü aç</a>
+          <button id="logout" aria-label="Çıkış yap"></button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <section class="admin-intro">
+          <div>
+            <span class="admin-kicker">KONTROL ODASI</span>
+            <h1>Fiyatlar değişir.<br /><em>Panik yapmayın.</em></h1>
+          </div>
+          <div class="admin-stats" id="admin-stats"></div>
+        </section>
+
+        <div id="notice-slot"></div>
+
+        <section class="campaign-admin">
+          <header>
+            <div><span>01</span><h2>Kampanyalar</h2></div>
+            <p>Normal ve indirimli fiyatlar QR menüde birlikte görünür.</p>
+          </header>
+          <div class="campaign-admin-grid" id="campaign-admin-grid"></div>
+        </section>
+
+        <section class="items-admin">
+          <header>
+            <div><span>02</span><h2>Menü ürünleri</h2></div>
+            <p>Fiyatları kuruş hassasiyetinde saklıyoruz.</p>
+          </header>
+          <div class="admin-filters">
+            <label id="filter-search"><input id="item-query" placeholder="Ürün ara…" /></label>
+            <label id="filter-category"><select id="category-filter"></select></label>
+            <span id="result-count"></span>
+          </div>
+          <div class="admin-table" id="admin-table">
+            <div class="admin-table-head">
+              <span>Ürün</span><span>Mevcut</span><span>Yeni fiyat</span><span>Durum</span><span></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/js/admin.js"></script>
+  </body>
+</html>

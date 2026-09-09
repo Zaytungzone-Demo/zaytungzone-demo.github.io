@@ -1,0 +1,9 @@
+name = "zaytung-zone-menu"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "public"
+
+# Menü burada saklanır. KV ad alanını bir kez oluşturup id'sini buraya yazın:
+#   npx wrangler kv namespace create MENU_KV
+[[kv_namespaces]]
+binding = "MENU_KV"
+id = "0577082482fd4aadacd176d6a570e78d"

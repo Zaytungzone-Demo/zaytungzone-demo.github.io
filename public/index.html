@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zaytung Zone — QR Menü</title>
+    <meta name="description" content="Zaytung Zone kampanyaları ve güncel QR menüsü." />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3efe5" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101820" />
+    <link rel="icon" href="/images/brand/zaytung-zone-logo.png" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script>
+      // Tema tercihini boyamadan önce uygula ki açık/koyu geçişinde ekran çakmasın.
+      try {
+        var preference = localStorage.getItem("zz-theme") || "system";
+        var dark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme:dark)").matches);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.dataset.themePreference = preference;
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a href="#top" class="brand" aria-label="Zaytung Zone ana menü">
+          <img src="/images/brand/zaytung-zone-logo.png" alt="" width="44" height="44" />
+          <span><b>ZAYTUNG</b><em>ZONE</em></span>
+        </a>
+        <div class="header-actions">
+          <button class="icon-button language-button" id="language-button"></button>
+          <button class="icon-button" id="theme-button"></button>
+          <button class="icon-button" id="search-button"></button>
+        </div>
+      </header>
+
+      <main id="top">
+        <section id="campaigns" class="campaigns-section section-wrap" aria-labelledby="campaign-title">
+          <div class="section-kicker"><span data-t="campaignEyebrow"></span><i id="campaign-count"></i></div>
+          <h1 id="campaign-title" data-t="campaigns"></h1>
+          <div class="campaign-grid" id="campaign-grid"></div>
+        </section>
+
+        <section id="search" class="search-section section-wrap">
+          <label for="menu-search" id="search-label"></label>
+          <input id="menu-search" type="search" autocomplete="off" />
+          <button id="search-clear" hidden></button>
+          <span class="result-count" id="result-count" aria-live="polite"></span>
+        </section>
+
+        <nav class="category-nav" aria-label="Menu categories">
+          <div class="category-bar section-wrap">
+            <button class="category-arrow prev" id="category-prev" disabled></button>
+            <div class="category-scroll" id="category-scroll"></div>
+            <button class="category-arrow next" id="category-next" disabled></button>
+          </div>
+        </nav>
+
+        <section id="menu" class="menu-section section-wrap" aria-labelledby="menu-title">
+          <div class="menu-heading">
+            <span data-t="menu"></span>
+            <h2 id="menu-title">À la carte,<br /><em>ama pek de laubali.</em></h2>
+          </div>
+          <div id="menu-list"></div>
+        </section>
+
+        <section id="survey" class="survey-section section-wrap">
+          <div class="survey-mark" id="survey-mark"></div>
+          <div>
+            <span>SON BİR ŞEY</span>
+            <h2 data-t="surveyTitle"></h2>
+            <p data-t="surveyBody"></p>
+          </div>
+          <a class="survey-button" id="survey-button" target="_blank" rel="noopener noreferrer"></a>
+        </section>
+      </main>
+
+      <footer class="site-footer section-wrap">
+        <div class="footer-brand"><b>ZAYTUNG</b><span>ZONE</span></div>
+        <p data-t="footer"></p>
+        <div class="social-links" id="social-links"></div>
+      </footer>
+
+      <nav class="bottom-nav" id="bottom-nav" aria-label="Mobile menu"></nav>
+
+      <div id="modal-root"></div>
+    </div>
+
+    <script type="module" src="/js/menu.js"></script>
+  </body>
+</html>
