@@ -357,6 +357,22 @@ function openCampaign(slug) {
 
   history.replaceState(null, "", `/kampanya/${campaign.slug}`);
   document.body.classList.add("modal-open");
+
+  // USDZ dosyasını arka planda önceden önbelleğe al (Prefetch):
+  // Kullanıcı 3D modeli 1-2 saniye incelerken dosya sessizce cihaza iner;
+  // "Masamda Gör"e bastığında indirme beklemeden şak diye açılır!
+  if (campaign.modelUsdzUrl) {
+    const prefetch = document.createElement("link");
+    prefetch.rel = "prefetch";
+    prefetch.as = "fetch";
+    prefetch.href = campaign.modelUsdzUrl;
+    document.head.appendChild(prefetch);
+
+    if (iOSCihaz) {
+      fetch(campaign.modelUsdzUrl, { cache: "force-cache" }).catch(() => {});
+    }
+  }
+
   $("modal-root").innerHTML = `
     <div class="modal-backdrop" role="presentation">
       <section class="model-modal" role="dialog" aria-modal="true" aria-labelledby="model-title">
@@ -405,10 +421,10 @@ function openCampaign(slug) {
   arButton.addEventListener("click", () => {
     const usdzUrl = campaign.modelUsdzUrl;
     if (iOSCihaz && usdzUrl) {
-      /* Tüm iOS tarayıcılarında (Safari, Chrome, Firefox vb.):
-         Apple WebKit standardı olan <a rel="ar"><img> tetiklenir.
-         Yeni sekme (_blank) açılmadığı için arkada 'about:blank' beyaz sayfası kalmaz;
-         Quick Look mevcut sayfanın üzerinde modal olarak açılır ve kapatılınca direkt menüye döner. */
+      const originalText = arButton.textContent;
+      arButton.textContent = "Açılıyor…";
+      arButton.style.opacity = "0.75";
+
       const anchor = document.createElement("a");
       anchor.rel = "ar";
       anchor.href = usdzUrl + "#allowsContentScaling=0";
@@ -418,7 +434,11 @@ function openCampaign(slug) {
       anchor.style.display = "none";
       document.body.appendChild(anchor);
       anchor.click();
-      setTimeout(() => anchor.remove(), 300);
+      setTimeout(() => {
+        anchor.remove();
+        arButton.textContent = originalText;
+        arButton.style.opacity = "";
+      }, 2000);
       return;
     }
 
