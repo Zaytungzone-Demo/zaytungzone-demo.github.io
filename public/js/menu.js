@@ -391,6 +391,7 @@ function openCampaign(slug) {
               ${campaign.modelUsdzUrl ? `ios-src="${campaign.modelUsdzUrl}"` : ""}
               alt="${escapeHtml(campaign.title[state.locale])} 3D modeli"
               ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" xr-environment
+              reveal="auto" loading="eager"
               camera-controls
               camera-orbit="0deg 60deg auto"
               min-camera-orbit="auto 5deg auto"
@@ -398,7 +399,9 @@ function openCampaign(slug) {
               touch-action="pan-y"
               shadow-intensity="1.2"
               shadow-softness="0.8"
-              environment-image="neutral"></model-viewer>
+              environment-image="neutral">
+              <button slot="ar-button" style="display:none;"></button>
+            </model-viewer>
             <div class="model-progress">${escapeHtml(t().modelLoading)}</div>
             <button class="ar-button" disabled>${escapeHtml(t().arUnavailable)}</button>
           </div>
