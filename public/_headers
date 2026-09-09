@@ -1,0 +1,5 @@
+/models/*.usdz
+  Content-Type: model/vnd.usdz+zip
+
+/models/*.glb
+  Content-Type: model/gltf-binary

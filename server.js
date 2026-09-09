@@ -179,7 +179,18 @@ app.patch("/api/admin/campaign/:id", requireLogin, (req, res) => {
 
 // --- Sayfalar ---
 
-app.use(express.static(path.join(root, "public"), { maxAge: "1h" }));
+app.use(
+  express.static(path.join(root, "public"), {
+    maxAge: "1h",
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".usdz")) {
+        res.setHeader("Content-Type", "model/vnd.usdz+zip");
+      } else if (filePath.endsWith(".glb")) {
+        res.setHeader("Content-Type", "model/gltf-binary");
+      }
+    },
+  })
+);
 
 /* Panel sayfaları statik dosyalar (Cloudflare Pages sürümüyle aynı olsun diye).
    İçlerinde veri yok; korunan şey /api/admin/* uçları. */

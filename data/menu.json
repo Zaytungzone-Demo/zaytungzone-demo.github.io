@@ -17,6 +17,7 @@
       "imageUrl": "/images/campaigns/source-1-2.jpg",
       "imagePosition": "top",
       "modelGlbUrl": "/models/campaign-1.glb",
+      "modelUsdzUrl": "/models/campaign-1.usdz",
       "enabled": true
     },
     {
@@ -35,7 +36,8 @@
       "campaignPriceKurus": 49900,
       "imageUrl": "/images/campaigns/source-1-2.jpg",
       "imagePosition": "bottom",
-      "modelGlbUrl": "/models/campaign-2.glb",
+      "modelGlbUrl": "/models/pepperoni-pizza.glb",
+      "modelUsdzUrl": "/models/pepperoni-pizza.usdz",
       "enabled": true
     },
     {
@@ -54,7 +56,8 @@
       "campaignPriceKurus": 44900,
       "imageUrl": "/images/campaigns/source-3-4.jpg",
       "imagePosition": "top",
-      "modelGlbUrl": "/models/campaign-3.glb",
+      "modelGlbUrl": "/models/kfc-zinger-burger.glb",
+      "modelUsdzUrl": "/models/kfc-zinger-burger.usdz",
       "enabled": true
     },
     {
@@ -74,6 +77,7 @@
       "imageUrl": "/images/campaigns/source-3-4.jpg",
       "imagePosition": "bottom",
       "modelGlbUrl": "/models/campaign-4.glb",
+      "modelUsdzUrl": "/models/campaign-4.usdz",
       "enabled": true
     },
     {
@@ -93,6 +97,7 @@
       "imageUrl": "/images/campaigns/source-5-6.jpg",
       "imagePosition": "top",
       "modelGlbUrl": "/models/campaign-5.glb",
+      "modelUsdzUrl": "/models/campaign-5.usdz",
       "enabled": true
     },
     {
@@ -112,6 +117,7 @@
       "imageUrl": "/images/campaigns/source-5-6.jpg",
       "imagePosition": "bottom",
       "modelGlbUrl": "/models/campaign-6.glb",
+      "modelUsdzUrl": "/models/campaign-6.usdz",
       "enabled": true
     }
   ],

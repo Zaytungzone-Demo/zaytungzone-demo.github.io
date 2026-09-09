@@ -330,6 +330,15 @@ function renderAll() {
 
 // --- 3D / AR kutusu ---
 
+const iOSCihaz =
+  /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+const iosSafari =
+  iOSCihaz &&
+  /WebKit/.test(navigator.userAgent) &&
+  !/CriOS|FxiOS|OPiOS|EdgiOS|GSA/.test(navigator.userAgent);
+
 let modelViewerScript;
 function loadModelViewer() {
   modelViewerScript ||= new Promise((resolve, reject) => {
@@ -351,6 +360,7 @@ function openCampaign(slug) {
   $("modal-root").innerHTML = `
     <div class="modal-backdrop" role="presentation">
       <section class="model-modal" role="dialog" aria-modal="true" aria-labelledby="model-title">
+        <div class="modal-handle-bar" data-close aria-label="${escapeHtml(t().close)}"></div>
         <header>
           <div>
             <span>CAMPAIGN 0${campaign.order}</span>
@@ -361,9 +371,18 @@ function openCampaign(slug) {
         </header>
         <div class="model-stage">
           <div class="model-viewer-shell">
-            <model-viewer src="${campaign.modelGlbUrl}" alt="${escapeHtml(campaign.title[state.locale])} 3D modeli"
+            <model-viewer src="${campaign.modelGlbUrl}"
+              ${campaign.modelUsdzUrl ? `ios-src="${campaign.modelUsdzUrl}"` : ""}
+              alt="${escapeHtml(campaign.title[state.locale])} 3D modeli"
               ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" xr-environment
-              camera-controls touch-action="pan-y" shadow-intensity="1" environment-image="neutral"></model-viewer>
+              camera-controls
+              camera-orbit="0deg 60deg auto"
+              min-camera-orbit="auto 5deg auto"
+              max-camera-orbit="auto 85deg auto"
+              touch-action="pan-y"
+              shadow-intensity="1.2"
+              shadow-softness="0.8"
+              environment-image="neutral"></model-viewer>
             <div class="model-progress">${escapeHtml(t().modelLoading)}</div>
             <button class="ar-button" disabled>${escapeHtml(t().arUnavailable)}</button>
           </div>
@@ -384,21 +403,38 @@ function openCampaign(slug) {
   const progress = $("modal-root").querySelector(".model-progress");
   const arButton = $("modal-root").querySelector(".ar-button");
   arButton.addEventListener("click", () => {
-    if (isIOS && !isIOSSafari) {
-      /* Chrome / Firefox iOS: GLB'yi yeni sekmede aç,
-         iOS bu dosyayı sistem seviyesinde AR Quick Look'a devreder. */
-      window.open(campaign.modelGlbUrl, '_blank');
-    } else {
-      viewer.activateAR?.();
+    const usdzUrl = campaign.modelUsdzUrl;
+    if (iOSCihaz && usdzUrl) {
+      /* Tüm iOS tarayıcılarında (Safari, Chrome, Firefox vb.):
+         Apple WebKit standardı olan <a rel="ar"><img> tetiklenir.
+         Yeni sekme (_blank) açılmadığı için arkada 'about:blank' beyaz sayfası kalmaz;
+         Quick Look mevcut sayfanın üzerinde modal olarak açılır ve kapatılınca direkt menüye döner. */
+      const anchor = document.createElement("a");
+      anchor.rel = "ar";
+      anchor.href = usdzUrl + "#allowsContentScaling=0";
+      const img = document.createElement("img");
+      img.src = campaign.imageUrl || "";
+      anchor.appendChild(img);
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
+      anchor.click();
+      setTimeout(() => anchor.remove(), 300);
+      return;
+    }
+
+    if (viewer.canActivateAR) {
+      viewer.activateAR();
     }
   });
 
   loadModelViewer().then(() => {
     const ready = () => {
       progress.remove();
-      /* canActivateAR Safari'de true döner; iOS Chrome'da false döner ama
-         biz yine de butonu enable ediyoruz — click handler farkı yönetiyor. */
-      if (viewer.canActivateAR || isIOS) {
+      const arSupported =
+        (iOSCihaz && campaign.modelUsdzUrl) ||
+        viewer.canActivateAR ||
+        /Android/.test(navigator.userAgent);
+      if (arSupported) {
         arButton.disabled = false;
         arButton.textContent = t().arReady;
       }
@@ -431,8 +467,8 @@ document.addEventListener("click", (event) => {
   if (event.target.closest("[data-close]")) return closeCampaign();
 });
 
-// Arka plana tıklayınca kapansın, kutunun içine tıklayınca kapanmasın.
-$("modal-root").addEventListener("mousedown", (event) => {
+// Arka plana tıklayınca/dokununca kapansın, kutunun içine tıklayınca kapanmasın.
+$("modal-root").addEventListener("click", (event) => {
   if (event.target.classList.contains("modal-backdrop")) closeCampaign();
 });
 

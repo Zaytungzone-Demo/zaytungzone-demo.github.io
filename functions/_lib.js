@@ -12,9 +12,31 @@ const encoder = new TextEncoder();
 /** KV boşsa depoyla gelen menüyle doldurur; sonraki okumalar KV'den gelir. */
 export async function readMenu(env) {
   const saved = await env.MENU_KV.get(MENU_KEY, "json");
-  if (saved) return saved;
-  await env.MENU_KV.put(MENU_KEY, JSON.stringify(seed));
-  return seed;
+  if (!saved) {
+    await env.MENU_KV.put(MENU_KEY, JSON.stringify(seed));
+    return seed;
+  }
+  // Kod tabanındaki yeni model/usdz yollarını KV'deki kampanyalara senkronize et
+  let changed = false;
+  if (seed.campaigns && saved.campaigns) {
+    for (const sCamp of seed.campaigns) {
+      const target = saved.campaigns.find((c) => c.id === sCamp.id);
+      if (target) {
+        if (sCamp.modelUsdzUrl && target.modelUsdzUrl !== sCamp.modelUsdzUrl) {
+          target.modelUsdzUrl = sCamp.modelUsdzUrl;
+          changed = true;
+        }
+        if (sCamp.modelGlbUrl && target.modelGlbUrl !== sCamp.modelGlbUrl) {
+          target.modelGlbUrl = sCamp.modelGlbUrl;
+          changed = true;
+        }
+      }
+    }
+  }
+  if (changed) {
+    await env.MENU_KV.put(MENU_KEY, JSON.stringify(saved));
+  }
+  return saved;
 }
 
 export async function writeMenu(env, menu) {
