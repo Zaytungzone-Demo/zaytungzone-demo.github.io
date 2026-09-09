@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-static.js",
     "start": "node server.js",
     "dev": "node --watch server.js",
     "cf:dev": "wrangler pages dev --kv MENU_KV",

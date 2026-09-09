@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giriş · Zaytung Zone</title>
+    <link rel="icon" href="/images/brand/zaytung-zone-logo.png" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <main class="login-page">
+      <div class="login-card">
+        <div>
+          <a class="admin-brand" href="/">
+            <img src="/images/brand/zaytung-zone-logo.png" alt="" width="42" height="42" />
+            <span><b>ZAYTUNG</b><em>CONTROL ROOM</em></span>
+          </a>
+          <h1>Fiyatlar değişir.<br />Panik yapmayın.</h1>
+          <p>Menüyü güncellemek için yönetici hesabıyla giriş yapın.</p>
+        </div>
+        <form class="login-form" id="login-form">
+          <label>Kullanıcı adı<input name="username" autocomplete="username" required /></label>
+          <label>Şifre<input name="password" type="password" autocomplete="current-password" required /></label>
+          <p class="form-error" id="login-error" hidden></p>
+          <button id="login-submit">Giriş yap</button>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById("login-form");
+      const error = document.getElementById("login-error");
+      const submit = document.getElementById("login-submit");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        submit.disabled = true;
+        error.hidden = true;
+
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+
+        if (response.ok) {
+          // Giriş kabul edildi. Buraya geri düşersek çerez saklanmamış demektir (aşağıya bak).
+          sessionStorage.setItem("zz-giris-denendi", "1");
+          location.href = "/admin";
+          return;
+        }
+        error.textContent = (await response.json().catch(() => ({}))).error || "Giriş yapılamadı.";
+        error.hidden = false;
+        submit.disabled = false;
+      });
+
+      /* Sunucu 200 döndüğü hâlde giriş sayfasına geri geldiysek tarayıcı oturum çerezini
+         reddetmiştir. En sık sebebi: NODE_ENV=production (çerez "Secure") ama site HTTPS değil.
+         Sessizce forma dönmek yerine sebebini yazıyoruz. */
+      if (sessionStorage.getItem("zz-giris-denendi")) {
+        sessionStorage.removeItem("zz-giris-denendi");
+        error.textContent =
+          location.protocol === "https:"
+            ? "Oturum çerezi saklanamadı. Tarayıcınızın çerezleri engellemediğinden emin olun."
+            : "Şifre doğru ama oturum açılamadı: sunucu production modunda, çerez yalnızca HTTPS üzerinden saklanır. Siteyi HTTPS ile açın ya da yerel testte NODE_ENV=production ayarını kaldırın.";
+        error.hidden = false;
+      }
+    </script>
+  </body>
+</html>
