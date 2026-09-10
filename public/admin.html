@@ -15,8 +15,10 @@
           <span><b>ZAYTUNG</b><em>CONTROL ROOM</em></span>
         </a>
         <div>
+          <button id="btn-download-json" class="admin-action-btn" title="Güncel menu.json dosyasını indir">JSON İndir</button>
+          <button id="btn-reset-menu" class="admin-action-btn danger" title="Değişiklikleri sıfırla ve varsayılan menüye dön">Sıfırla</button>
           <a href="/" target="_blank" id="open-menu">Menüyü aç</a>
-          <button id="logout" aria-label="Çıkış yap"></button>
+          <button id="logout" aria-label="Çıkış yap" title="Çıkış yap"></button>
         </div>
       </header>
 
@@ -33,16 +35,28 @@
 
         <section class="campaign-admin">
           <header>
-            <div><span>01</span><h2>Kampanyalar</h2></div>
-            <p>Normal ve indirimli fiyatlar QR menüde birlikte görünür.</p>
+            <div>
+              <span>01</span>
+              <h2>Kampanyalar</h2>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <p>Normal ve indirimli fiyatlar QR menüde birlikte görünür.</p>
+              <button id="btn-open-add-campaign" class="admin-action-btn accent">+ Yeni Kampanya Ekle</button>
+            </div>
           </header>
           <div class="campaign-admin-grid" id="campaign-admin-grid"></div>
         </section>
 
         <section class="items-admin">
           <header>
-            <div><span>02</span><h2>Menü ürünleri</h2></div>
-            <p>Fiyatları kuruş hassasiyetinde saklıyoruz.</p>
+            <div>
+              <span>02</span>
+              <h2>Menü ürünleri</h2>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <p>Fiyatları kuruş hassasiyetinde saklıyoruz.</p>
+              <button id="btn-open-add-item" class="admin-action-btn accent">+ Yeni Ürün Ekle</button>
+            </div>
           </header>
           <div class="admin-filters">
             <label id="filter-search"><input id="item-query" placeholder="Ürün ara…" /></label>
@@ -51,12 +65,129 @@
           </div>
           <div class="admin-table" id="admin-table">
             <div class="admin-table-head">
-              <span>Ürün</span><span>Mevcut</span><span>Yeni fiyat</span><span>Durum</span><span></span>
+              <span>Ürün</span><span>Mevcut</span><span>Yeni fiyat</span><span>Durum</span><span></span><span></span>
             </div>
           </div>
         </section>
       </div>
     </main>
+
+    <!-- Modal: Yeni Kampanya Ekle -->
+    <dialog id="modal-add-campaign" class="admin-dialog">
+      <div class="admin-dialog-body">
+        <div class="admin-dialog-header">
+          <h3>Yeni Kampanya Ekle</h3>
+          <button type="button" class="admin-dialog-close" data-close-dialog="modal-add-campaign">&times;</button>
+        </div>
+        <form id="form-add-campaign" style="display: grid; gap: 14px;">
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Başlık (Türkçe) *</label>
+              <input name="titleTr" placeholder="Örn: Hafta Sonu Bombası" required />
+            </div>
+            <div class="admin-form-group">
+              <label>Title (English)</label>
+              <input name="titleEn" placeholder="Örn: Weekend Special" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Açıklama (Türkçe)</label>
+              <input name="subtitleTr" placeholder="Örn: Burger + Patates + İçecek" />
+            </div>
+            <div class="admin-form-group">
+              <label>Description (English)</label>
+              <input name="subtitleEn" placeholder="Örn: Burger + Fries + Beverage" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Normal Fiyat (₺) *</label>
+              <input name="originalPrice" type="number" step="0.01" placeholder="420.00" required />
+            </div>
+            <div class="admin-form-group">
+              <label>Kampanya Fiyatı (₺) *</label>
+              <input name="campaignPrice" type="number" step="0.01" placeholder="330.00" required />
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label>3D Model GLB Yolu / URL</label>
+            <input name="modelGlbUrl" placeholder="models/burger.glb" />
+          </div>
+          <div class="admin-form-group">
+            <label>3D Model USDZ (iOS AR) Yolu / URL</label>
+            <input name="modelUsdzUrl" placeholder="models/burger.usdz" />
+          </div>
+          <label class="switch" style="margin-top: 4px;">
+            <input type="checkbox" name="enabled" checked />
+            <span></span> Hemen Yayına Al
+          </label>
+          <div class="admin-dialog-actions">
+            <button type="button" class="admin-action-btn" data-close-dialog="modal-add-campaign">İptal</button>
+            <button type="submit" class="admin-action-btn accent">Kampanyayı Oluştur</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Modal: Yeni Ürün Ekle -->
+    <dialog id="modal-add-item" class="admin-dialog">
+      <div class="admin-dialog-body">
+        <div class="admin-dialog-header">
+          <h3>Yeni Ürün Ekle</h3>
+          <button type="button" class="admin-dialog-close" data-close-dialog="modal-add-item">&times;</button>
+        </div>
+        <form id="form-add-item" style="display: grid; gap: 14px;">
+          <div class="admin-form-group">
+            <label>Kategori *</label>
+            <select name="categoryId" id="item-modal-category" required></select>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Ürün Adı (Türkçe) *</label>
+              <input name="nameTr" placeholder="Örn: Truffle Burger" required />
+            </div>
+            <div class="admin-form-group">
+              <label>Product Name (English)</label>
+              <input name="nameEn" placeholder="Örn: Truffle Burger" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Açıklama (Türkçe)</label>
+              <input name="descTr" placeholder="Örn: Özel mantar soslu, 160g dana köfte" />
+            </div>
+            <div class="admin-form-group">
+              <label>Description (English)</label>
+              <input name="descEn" placeholder="Örn: Mushroom sauce, 160g beef patty" />
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Fiyat (₺) *</label>
+              <input name="price" type="number" step="0.01" placeholder="280.00" required />
+            </div>
+            <div class="admin-form-group">
+              <label>Görsel URL / Yolu</label>
+              <input name="imageUrl" placeholder="images/items/... veya https://..." />
+            </div>
+          </div>
+          <div style="display: flex; gap: 20px; align-items: center; margin-top: 4px;">
+            <label class="switch">
+              <input type="checkbox" name="enabled" checked />
+              <span></span> Aktif
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 750; cursor: pointer;">
+              <input type="checkbox" name="soldOut" /> Tükendi olarak işaretle
+            </label>
+          </div>
+          <div class="admin-dialog-actions">
+            <button type="button" class="admin-action-btn" data-close-dialog="modal-add-item">İptal</button>
+            <button type="submit" class="admin-action-btn accent">Ürünü Ekle</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
 
     <script type="module" src="/js/admin.js"></script>
   </body>

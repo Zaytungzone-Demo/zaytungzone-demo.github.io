@@ -46,7 +46,6 @@
         const data = Object.fromEntries(new FormData(form));
         let loggedIn = false;
 
-        // 1. Önce arka uç API'sini dene (Node server veya Cloudflare)
         try {
           const response = await fetch("/api/login", {
             method: "POST",
@@ -56,11 +55,8 @@
           if (response.ok) {
             loggedIn = true;
           }
-        } catch (err) {
-          // Statik ortam, arka uç yok
-        }
+        } catch (err) {}
 
-        // 2. Statik fallback (GitHub Pages için varsayılan kontrol)
         if (!loggedIn) {
           if (data.username === "admin" && (data.password === "zaytung123" || data.password === "admin")) {
             loggedIn = true;

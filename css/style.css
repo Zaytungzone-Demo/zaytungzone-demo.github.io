@@ -225,5 +225,32 @@ model-viewer { display: block; width: 100%; height: 100%; min-height: 0; --poste
   .login-card { padding: 44px; }.admin-header > div a { display: flex; }.admin-content { width: min(1240px,calc(100% - 64px)); }.admin-intro { grid-template-columns: 1fr 330px; align-items: end; }.campaign-admin-grid { grid-template-columns: repeat(2,1fr); }.campaign-admin > header, .items-admin > header { grid-template-columns: 1fr auto; align-items: end; }.admin-filters { grid-template-columns: 1fr 260px auto; align-items: center; }
 }
 @media (min-width: 1000px) {
-  .campaign-admin-grid { grid-template-columns: repeat(3,1fr); }.admin-table-head { padding: 12px 14px; display: grid; grid-template-columns: minmax(280px,1fr) 110px 130px 170px 44px; gap: 14px; color: var(--ink-soft); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; background: var(--paper-2); }.admin-table > form { grid-template-columns: minmax(280px,1fr) 110px 130px 170px 44px; align-items: center; }.admin-table > form > button { grid-column: auto; grid-row: auto; }.row-toggles { flex-direction: column; align-items: start; gap: 4px; }
+  .campaign-admin-grid { grid-template-columns: repeat(3,1fr); }.admin-table-head { padding: 12px 14px; display: grid; grid-template-columns: minmax(240px,1fr) 100px 120px 160px 42px 42px; gap: 12px; color: var(--ink-soft); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; background: var(--paper-2); }.admin-table > form { grid-template-columns: minmax(240px,1fr) 100px 120px 160px 42px 42px; align-items: center; }.admin-table > form > button { grid-column: auto; grid-row: auto; }.row-toggles { flex-direction: column; align-items: start; gap: 4px; }
 }
+
+.admin-action-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; font-size: 12px; font-weight: 800; background: var(--card); color: var(--ink); cursor: pointer; transition: all .15s ease; }
+.admin-action-btn:hover { background: var(--paper-2); transform: translateY(-1px); }
+.admin-action-btn.accent { background: var(--accent); color: white; border-color: transparent; }
+.admin-action-btn.accent:hover { filter: brightness(1.1); }
+.admin-action-btn.danger { color: #e24a2a; border-color: rgba(226,74,42,.3); }
+.admin-action-btn.danger:hover { background: rgba(226,74,42,.1); }
+
+.admin-section-actions { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+
+.icon-btn-danger { width: 42px; height: 42px; border: 1px solid rgba(226,74,42,.25); border-radius: 50%; background: transparent; color: #e24a2a; display: grid; place-items: center; cursor: pointer; transition: background .15s, transform .1s; flex: none; }
+.icon-btn-danger:hover { background: rgba(226,74,42,.12); transform: scale(1.05); }
+
+.admin-dialog { border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink); padding: 0; width: min(540px, calc(100vw - 32px)); box-shadow: 0 20px 40px rgba(0,0,0,.35); margin: auto; }
+.admin-dialog::backdrop { background: rgba(0,0,0,.65); backdrop-filter: blur(4px); }
+.admin-dialog-body { padding: 24px 28px; display: grid; gap: 16px; }
+.admin-dialog-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.admin-dialog-header h3 { margin: 0; font: 700 24px Georgia, serif; }
+.admin-dialog-close { border: 0; background: transparent; font-size: 24px; color: var(--ink-soft); cursor: pointer; padding: 4px; line-height: 1; }
+.admin-dialog-close:hover { color: var(--ink); }
+
+.admin-form-group { display: grid; gap: 6px; }
+.admin-form-group label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+.admin-form-group input, .admin-form-group textarea, .admin-form-group select { width: 100%; min-height: 42px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); color: var(--ink); font-size: 14px; box-sizing: border-box; }
+.admin-form-group textarea { min-height: 64px; resize: vertical; font-family: inherit; }
+.admin-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.admin-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }

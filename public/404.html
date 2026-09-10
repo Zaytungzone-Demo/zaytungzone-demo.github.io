@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Yönlendiriliyor · Zaytung Zone</title>
+    <script>
+      (function() {
+        var path = window.location.pathname.toLowerCase();
+        if (path.includes("/admin")) {
+          window.location.replace("/admin/");
+          return;
+        }
+        if (path.includes("/login")) {
+          window.location.replace("/login/");
+          return;
+        }
+        window.location.replace("/");
+      })();
+    </script>
+  </head>
+  <body style="background: #101820; color: #f3efe5; font-family: sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0;">
+    <p>Yönlendiriliyorsunuz...</p>
+  </body>
+</html>

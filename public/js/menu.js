@@ -544,24 +544,60 @@ if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "system") 
 document.documentElement.lang = state.locale;
 
 let menuData = null;
-const apiUrls = [
-  resolveAssetUrl("api/menu.json"),
-  resolveAssetUrl("api/menu"),
-  "/api/menu",
-];
-for (const url of apiUrls) {
+
+function parseAdminMenu(raw) {
   try {
-    const response = await fetch(url);
-    if (response.ok) {
-      menuData = await response.json();
-      break;
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (parsed && parsed.categories && parsed.categories.length > 0) {
+      return {
+        campaigns: (parsed.campaigns || []).filter((c) => c.enabled),
+        categories: (parsed.categories || [])
+          .filter((cat) => cat.enabled)
+          .map((cat) => ({ ...cat, items: (cat.items || []).filter((i) => i.enabled) }))
+          .filter((cat) => cat.items.length > 0),
+      };
     }
   } catch (err) {}
+  return null;
 }
+
+// 1. Önce admin tarafından localStorage'a kaydedilmiş düzenlenmiş menü var mı kontrol et
+const localMenuData = parseAdminMenu(localStorage.getItem("zz-menu-data"));
+if (localMenuData) {
+  menuData = localMenuData;
+} else {
+  const apiUrls = [
+    resolveAssetUrl("api/menu.json"),
+    resolveAssetUrl("api/menu"),
+    "/api/menu",
+  ];
+  for (const url of apiUrls) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        menuData = await response.json();
+        break;
+      }
+    } catch (err) {}
+  }
+}
+
 if (!menuData) throw new Error("Menü verisi yüklenemedi.");
 state.data = menuData;
 state.activeCategory = state.data.categories[0]?.slug ?? "";
 renderAll();
+
+// 2. Admin sekmesinden yapılan anlık değişiklikleri canlı dinle
+window.addEventListener("storage", (event) => {
+  if (event.key === "zz-menu-data") {
+    const updated = parseAdminMenu(event.newValue);
+    if (updated) {
+      state.data = updated;
+      state.activeCategory = state.data.categories[0]?.slug ?? "";
+      renderAll();
+    }
+  }
+});
 
 // QR kodu veya link doğrudan bir kampanyaya bakıyorsa 3D kutusunu açarak başla.
 const hashMatch = (location.hash || "").match(/#kampanya\/([\w-]+)/);
