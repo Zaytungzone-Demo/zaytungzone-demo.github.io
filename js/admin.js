@@ -5,13 +5,8 @@ const escapeHtml = (value) =>
   String(value || "").replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
 
 // --- 1. Güvenlik ve Yetki Kontrolü ---
-const isAuth =
-  sessionStorage.getItem("zz-session") === "authenticated" ||
-  localStorage.getItem("zz-admin-auth") === "1" ||
-  document.cookie.includes("zz_session=authenticated");
-
-if (!isAuth) {
-  location.replace("/login");
+if (sessionStorage.getItem("zz_session") !== "active") {
+  window.location.replace("/login.html");
   await new Promise(() => {}); // Yönlendirme bitene kadar sonraki kodları dondur
 }
 
@@ -361,13 +356,13 @@ $("btn-reset-menu")?.addEventListener("click", () => {
 
 $("logout").innerHTML = icon("logOut", 18);
 $("logout").addEventListener("click", async () => {
-  sessionStorage.removeItem("zz-session");
+  sessionStorage.removeItem("zz_session");
   localStorage.removeItem("zz-admin-auth");
   document.cookie = "zz_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   try {
     await fetch("/api/logout", { method: "POST" });
   } catch (err) {}
-  location.href = "/login";
+  window.location.replace("/login.html");
 });
 
 function updateStats() {

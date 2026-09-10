@@ -6,12 +6,21 @@
     <script>
       (function() {
         var path = window.location.pathname.toLowerCase();
+        var isAuth = sessionStorage.getItem("zz_session") === "active";
         if (path.includes("/admin")) {
-          window.location.replace("/admin/");
+          if (!isAuth) {
+            window.location.replace("/login.html");
+          } else {
+            window.location.replace("/admin.html");
+          }
           return;
         }
         if (path.includes("/login")) {
-          window.location.replace("/login/");
+          if (isAuth) {
+            window.location.replace("/admin.html");
+          } else {
+            window.location.replace("/login.html");
+          }
           return;
         }
         window.location.replace("/");

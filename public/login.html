@@ -6,6 +6,12 @@
     <title>Giriş · Zaytung Zone</title>
     <link rel="icon" href="/images/brand/zaytung-zone-logo.png" />
     <link rel="stylesheet" href="/css/style.css" />
+    <script>
+      // Zaten oturum açıksa doğrudan admin'e yönlendir
+      if (sessionStorage.getItem("zz_session") === "active") {
+        window.location.replace("/admin.html");
+      }
+    </script>
   </head>
   <body>
     <main class="login-page">
@@ -23,17 +29,12 @@
           <label>Şifre<input name="password" type="password" autocomplete="current-password" placeholder="zaytung123" required /></label>
           <p class="form-error" id="login-error" hidden></p>
           <button id="login-submit">Giriş yap</button>
-          <small style="color: #7b8893; font-size: 11px; text-align: center; display: block; margin-top: 4px;">Giriş: admin / zaytung123</small>
+          <small style="color: #7b8893; font-size: 11px; text-align: center; display: block; margin-top: 4px;">Varsayılan: admin / zaytung123</small>
         </form>
       </div>
     </main>
 
     <script>
-      // Zaten oturum açıksa doğrudan admin'e yönlendir
-      if (sessionStorage.getItem("zz-session") === "authenticated" || localStorage.getItem("zz-admin-auth") === "1") {
-        location.replace("/admin");
-      }
-
       const form = document.getElementById("login-form");
       const error = document.getElementById("login-error");
       const submit = document.getElementById("login-submit");
@@ -46,7 +47,7 @@
         const data = Object.fromEntries(new FormData(form));
         let loggedIn = false;
 
-        // 1. Önce arka uç API'sini dene (Node server veya Cloudflare)
+        // 1. Önce arka uç API varsa dene
         try {
           const response = await fetch("/api/login", {
             method: "POST",
@@ -56,9 +57,7 @@
           if (response.ok) {
             loggedIn = true;
           }
-        } catch (err) {
-          // Statik ortam, arka uç yok
-        }
+        } catch (err) {}
 
         // 2. Statik fallback (GitHub Pages için varsayılan kontrol)
         if (!loggedIn) {
@@ -68,10 +67,9 @@
         }
 
         if (loggedIn) {
-          sessionStorage.setItem("zz-session", "authenticated");
-          localStorage.setItem("zz-admin-auth", "1");
-          document.cookie = "zz_session=authenticated; path=/; max-age=86400; SameSite=Lax";
-          location.href = "/admin";
+          sessionStorage.setItem("zz_session", "active");
+          document.cookie = "zz_session=active; path=/; max-age=86400; SameSite=Lax";
+          window.location.replace("/admin.html");
           return;
         }
 
