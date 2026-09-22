@@ -429,15 +429,16 @@ function openCampaign(slug) {
             <model-viewer src="${glbUrl}"
               ${usdzUrl ? `ios-src="${usdzUrl}"` : ""}
               alt="${escapeHtml(campaign.title[state.locale])} 3D modeli"
-              ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" xr-environment
+              ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed"
               reveal="auto" loading="eager"
               camera-controls
               camera-orbit="0deg 60deg 105%"
               min-camera-orbit="auto 5deg 50%"
               max-camera-orbit="auto 85deg 200%"
               touch-action="none"
-              shadow-intensity="1.2"
-              shadow-softness="0.8"
+              shadow-intensity="1"
+              shadow-softness="0.6"
+              exposure="0.9"
               environment-image="neutral">
               <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
