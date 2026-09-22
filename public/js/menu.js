@@ -310,6 +310,7 @@ function updateCategoryArrows() {
 // Kaydırdıkça üstteki kategori sekmesi kendini işaretlesin.
 let categoryObserver;
 function observeCategories() {
+  if (typeof IntersectionObserver === 'undefined') return; // eski tarayıcı guard
   categoryObserver?.disconnect();
   categoryObserver = new IntersectionObserver(
     (entries) => {
@@ -349,13 +350,24 @@ const iosSafari =
   /WebKit/.test(navigator.userAgent) &&
   !/CriOS|FxiOS|OPiOS|EdgiOS|GSA/.test(navigator.userAgent);
 
-let modelViewerScript;
+let modelViewerScript = null;
+let modelViewerLoading = false;
 function loadModelViewer() {
-  modelViewerScript ||= new Promise((resolve, reject) => {
+  if (modelViewerScript) return modelViewerScript;
+  // Sayfada zaten model-viewer scripti var mı?
+  if (document.querySelector('script[src*="model-viewer"]')) {
+    modelViewerScript = Promise.resolve();
+    return modelViewerScript;
+  }
+  modelViewerScript = new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = resolveAssetUrl("vendor/model-viewer.min.js");
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = (err) => {
+      // Hata durumunda bir sonraki openCampaign'in tekrar denemesine izin ver
+      modelViewerScript = null;
+      reject(err);
+    };
     document.head.append(script);
   });
   return modelViewerScript;
@@ -365,26 +377,39 @@ function openCampaign(slug) {
   const campaign = state.data.campaigns.find((entry) => entry.slug === slug);
   if (!campaign) return;
 
-  history.replaceState(null, "", `#kampanya/${campaign.slug}`);
+  // iOS Safari scroll lock: scrollY'yi kaydet, body'yi fixed yap
+  const scrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.dataset.scrollY = scrollY;
+  document.body.style.top = `-${scrollY}px`;
   document.body.classList.add("modal-open");
+
+  try { history.replaceState(null, "", `#kampanya/${campaign.slug}`); } catch (e) {}
 
   const usdzUrl = resolveAssetUrl(campaign.modelUsdzUrl);
   const glbUrl = resolveAssetUrl(campaign.modelGlbUrl);
   const imgUrl = resolveAssetUrl(campaign.imageUrl);
 
-  // USDZ dosyasını arka planda önceden önbelleğe al (Prefetch):
+  // USDZ ve GLB dosyalarını arka planda önceden önbelleğe al (Prefetch):
   // Kullanıcı 3D modeli 1-2 saniye incelerken dosya sessizce cihaza iner;
   // "Masamda Gör"e bastığında indirme beklemeden şak diye açılır!
   if (usdzUrl) {
-    const prefetch = document.createElement("link");
-    prefetch.rel = "prefetch";
-    prefetch.as = "fetch";
-    prefetch.href = usdzUrl;
-    document.head.appendChild(prefetch);
+    const prefetchUsdz = document.createElement("link");
+    prefetchUsdz.rel = "prefetch";
+    prefetchUsdz.as = "fetch";
+    prefetchUsdz.href = usdzUrl;
+    document.head.appendChild(prefetchUsdz);
 
     if (iOSCihaz) {
       fetch(usdzUrl, { cache: "force-cache" }).catch(() => {});
     }
+  }
+  // GLB'yi de önbelleğe al (özellikle Android / masaüstü için)
+  if (glbUrl) {
+    const prefetchGlb = document.createElement("link");
+    prefetchGlb.rel = "prefetch";
+    prefetchGlb.as = "fetch";
+    prefetchGlb.href = glbUrl;
+    document.head.appendChild(prefetchGlb);
   }
 
   $("modal-root").innerHTML = `
@@ -404,13 +429,13 @@ function openCampaign(slug) {
             <model-viewer src="${glbUrl}"
               ${usdzUrl ? `ios-src="${usdzUrl}"` : ""}
               alt="${escapeHtml(campaign.title[state.locale])} 3D modeli"
-              ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" xr-environment
+              ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" xr-environment
               reveal="auto" loading="eager"
               camera-controls
-              camera-orbit="0deg 60deg auto"
-              min-camera-orbit="auto 5deg auto"
-              max-camera-orbit="auto 85deg auto"
-              touch-action="pan-y"
+              camera-orbit="0deg 60deg 105%"
+              min-camera-orbit="auto 5deg 50%"
+              max-camera-orbit="auto 85deg 200%"
+              touch-action="none"
               shadow-intensity="1.2"
               shadow-softness="0.8"
               environment-image="neutral">
@@ -484,7 +509,12 @@ function closeCampaign() {
   if (!$("modal-root").firstElementChild) return;
   $("modal-root").innerHTML = "";
   document.body.classList.remove("modal-open");
-  history.replaceState(null, "", window.location.pathname + (window.location.search || ""));
+  // iOS Safari scroll restore
+  const savedScrollY = parseInt(document.body.dataset.scrollY || "0", 10);
+  document.body.style.top = "";
+  delete document.body.dataset.scrollY;
+  if (savedScrollY) window.scrollTo(0, savedScrollY);
+  try { history.replaceState(null, "", window.location.pathname + (window.location.search || "")); } catch (e) {}
 }
 
 // --- Olaylar ---
@@ -537,9 +567,13 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme
 
 // --- Açılış ---
 
-const savedLocale = localStorage.getItem("zz-locale");
+// localStorage'a erişim Private Mode'da Safari'de SecurityError fırlatabilir
+let savedLocale, savedTheme;
+try {
+  savedLocale = localStorage.getItem("zz-locale");
+  savedTheme = localStorage.getItem("zz-theme");
+} catch (e) { savedLocale = null; savedTheme = null; }
 if (savedLocale === "tr" || savedLocale === "en") state.locale = savedLocale;
-const savedTheme = localStorage.getItem("zz-theme");
 if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "system") state.theme = savedTheme;
 document.documentElement.lang = state.locale;
 
