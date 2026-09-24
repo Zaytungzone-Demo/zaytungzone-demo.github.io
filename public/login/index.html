@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Giriş · Zaytung Zone</title>
-    <link rel="icon" href="/images/brand/zaytung-zone-logo.png" />
+    <title>Giriş · Restoranınız</title>
+    <link rel="icon" type="image/svg+xml" href="/images/brand/logo.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <script>
       // Zaten oturum açıksa doğrudan admin'e yönlendir
@@ -18,18 +18,18 @@
       <div class="login-card">
         <div>
           <a class="admin-brand" href="/">
-            <img src="/images/brand/zaytung-zone-logo.png" alt="" width="42" height="42" />
-            <span><b>ZAYTUNG</b><em>CONTROL ROOM</em></span>
+            <img src="/images/brand/logo.svg" alt="" width="42" height="42" />
+            <span><b>RESTORANINIZ</b><em>CONTROL ROOM</em></span>
           </a>
           <h1>Fiyatlar değişir.<br />Panik yapmayın.</h1>
           <p>Menüyü güncellemek için yönetici hesabıyla giriş yapın.</p>
         </div>
         <form class="login-form" id="login-form">
           <label>Kullanıcı adı<input name="username" autocomplete="username" value="admin" required /></label>
-          <label>Şifre<input name="password" type="password" autocomplete="current-password" placeholder="zaytung123" required /></label>
+          <label>Şifre<input name="password" type="password" autocomplete="current-password" placeholder="admin123" required /></label>
           <p class="form-error" id="login-error" hidden></p>
           <button id="login-submit">Giriş yap</button>
-          <small style="color: #7b8893; font-size: 11px; text-align: center; display: block; margin-top: 4px;">Varsayılan: admin / zaytung123</small>
+          <small style="color: #7b8893; font-size: 11px; text-align: center; display: block; margin-top: 4px;">Varsayılan: admin / admin123</small>
         </form>
       </div>
     </main>
@@ -61,7 +61,7 @@
 
         // 2. Statik fallback (GitHub Pages için varsayılan kontrol)
         if (!loggedIn) {
-          if (data.username === "admin" && (data.password === "zaytung123" || data.password === "admin")) {
+          if (data.username === "admin" && data.password === "admin123") {
             loggedIn = true;
           }
         }
@@ -73,7 +73,7 @@
           return;
         }
 
-        error.textContent = "Kullanıcı adı veya şifre hatalı. (Varsayılan: admin / zaytung123)";
+        error.textContent = "Kullanıcı adı veya şifre hatalı. (Varsayılan: admin / admin123)";
         error.hidden = false;
         submit.disabled = false;
       });

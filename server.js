@@ -18,7 +18,7 @@ try {
 
 const port = process.env.PORT || 3000;
 const ADMIN_USER = process.env.ADMIN_USERNAME || "admin";
-const ADMIN_PASS = process.env.ADMIN_PASSWORD || "zaytung123";
+const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin123";
 const SESSION_TTL = 12 * 60 * 60 * 1000;
 
 /** Aktif oturumlar: token -> son kullanma zamanı. Sunucu yeniden başlayınca sıfırlanır. */
@@ -54,7 +54,7 @@ function requireLogin(req, res, next) {
 }
 
 // Yayında varsayılan şifreyle açılmasın — panel herkese açık kalırdı.
-if (process.env.NODE_ENV === "production" && ADMIN_PASS === "zaytung123") {
+if (process.env.NODE_ENV === "production" && ADMIN_PASS === "admin123") {
   console.error("HATA: ADMIN_PASSWORD ayarlanmadan production modunda başlatılamaz.");
   process.exit(1);
 }

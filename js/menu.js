@@ -13,11 +13,6 @@ const isIOSSafari = isIOS && /WebKit/.test(navigator.userAgent) &&
 
 const SURVEY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdfTEeSjdCDmCmWsl8bkBvXCQ2aZigUwUK7K0hbpa0ZEhbtUg/viewform?usp=send_form";
-const SOCIAL_URLS = {
-  facebook: "https://www.facebook.com/zaytungzone",
-  x: "https://x.com/zaytungzone",
-  instagram: "https://www.instagram.com/zaytungzone/",
-};
 
 function resolveAssetUrl(path) {
   if (!path) return path;
@@ -54,6 +49,9 @@ const copy = {
     modelLoading: "3D model yükleniyor…",
     arReady: "Masamda gör",
     arUnavailable: "AR destekli cihazda masamda gör",
+    brand: "RESTORANINIZ",
+    brandHome: "Restoranınız ana menü",
+    pageTitle: "Restoranınız — QR Menü",
   },
   en: {
     campaigns: "Today at the table",
@@ -79,6 +77,9 @@ const copy = {
     modelLoading: "Loading the 3D model…",
     arReady: "See it on my table",
     arUnavailable: "Needs an AR capable device",
+    brand: "YOUR RESTAURANT",
+    brandHome: "Your Restaurant home",
+    pageTitle: "Your Restaurant — QR Menu",
   },
 };
 
@@ -156,6 +157,8 @@ function toggleLocale() {
 
 function renderStaticCopy() {
   for (const node of document.querySelectorAll("[data-t]")) node.textContent = t()[node.dataset.t];
+  document.title = t().pageTitle;
+  document.querySelector(".brand").setAttribute("aria-label", t().brandHome);
 
   const language = $("language-button");
   language.innerHTML = `${icon("languages", 18)}<span>${state.locale.toUpperCase()}</span>`;
@@ -176,10 +179,11 @@ function renderStaticCopy() {
   survey.href = SURVEY_URL;
   survey.innerHTML = `${escapeHtml(t().survey)}${icon("chevronRight")}`;
 
+  // Demo: sosyal medya hesabı yok, butonlar yalnızca görsel
   $("social-links").innerHTML = `
-    <a href="${SOCIAL_URLS.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">${icon("facebook")}</a>
-    <a href="${SOCIAL_URLS.x}" target="_blank" rel="noopener noreferrer" aria-label="X"><b>𝕏</b></a>
-    <a href="${SOCIAL_URLS.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${icon("instagram")}</a>`;
+    <span aria-hidden="true">${icon("facebook")}</span>
+    <span aria-hidden="true"><b>𝕏</b></span>
+    <span aria-hidden="true">${icon("instagram")}</span>`;
 
   $("bottom-nav").innerHTML = `
     <button data-scroll="campaigns">${icon("badgePercent")}<span>${escapeHtml(t().campaigns.split(" ")[0])}</span></button>

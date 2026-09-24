@@ -20,7 +20,7 @@ Ortam değişkenleriyle yapılandırılır:
 | --- | --- | --- |
 | `PORT` | `3000` | Sunucu portu |
 | `ADMIN_USERNAME` | `admin` | Panel kullanıcı adı |
-| `ADMIN_PASSWORD` | `zaytung123` | Panel şifresi — **yayında zorunlu**, ayarlanmazsa sunucu açılmaz |
+| `ADMIN_PASSWORD` | `admin123` | Panel şifresi — **yayında zorunlu**, ayarlanmazsa sunucu açılmaz |
 | `NODE_ENV` | — | `production`: çerez yalnızca HTTPS üzerinden gider, zayıf şifre reddedilir |
 | `TRUST_PROXY` | — | Ters vekil arkasındaysanız `1`; gerçek ziyaretçi IP'si için |
 | `DATA_FILE` | `data/menu.json` | Canlı menünün yazılacağı yol. Kalıcı disk varsa oraya gösterin |
