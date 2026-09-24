@@ -350,6 +350,9 @@ const iosSafari =
   /WebKit/.test(navigator.userAgent) &&
   !/CriOS|FxiOS|OPiOS|EdgiOS|GSA/.test(navigator.userAgent);
 
+let usdzBlobUrl = null;
+let usdzBlobPromise = null;
+
 let modelViewerScript = null;
 let modelViewerLoading = false;
 function loadModelViewer() {
@@ -389,28 +392,24 @@ function openCampaign(slug) {
   const glbUrl = resolveAssetUrl(campaign.modelGlbUrl);
   const imgUrl = resolveAssetUrl(campaign.imageUrl);
 
-  // USDZ ve GLB dosyalarını arka planda önceden önbelleğe al (Prefetch):
-  // Kullanıcı 3D modeli 1-2 saniye incelerken dosya sessizce cihaza iner;
-  // "Masamda Gör"e bastığında indirme beklemeden şak diye açılır!
-  if (usdzUrl) {
-    const prefetchUsdz = document.createElement("link");
-    prefetchUsdz.rel = "prefetch";
-    prefetchUsdz.as = "fetch";
-    prefetchUsdz.href = usdzUrl;
-    document.head.appendChild(prefetchUsdz);
-
-    if (iOSCihaz) {
-      fetch(usdzUrl, { cache: "force-cache" }).catch(() => {});
-    }
-  }
-  // GLB'yi de önbelleğe al (özellikle Android / masaüstü için)
-  if (glbUrl) {
-    const prefetchGlb = document.createElement("link");
-    prefetchGlb.rel = "prefetch";
-    prefetchGlb.as = "fetch";
-    prefetchGlb.href = glbUrl;
-    document.head.appendChild(prefetchGlb);
-  }
+  // iOS: USDZ'yi kullanıcı 3D modeli incelerken indir ve blob olarak hafızada tut.
+  // "Masamda gör"e basınca Quick Look bu blob'u açar; dosyayı ikinci kez indirmez
+  // ve AR sahnesi model inmesini beklemeden açılır. (Android bu dosyayı hiç kullanmaz,
+  // o yüzden orada indirilmez. GLB'yi zaten model-viewer indiriyor.)
+  if (usdzBlobUrl) URL.revokeObjectURL(usdzBlobUrl);
+  usdzBlobUrl = null;
+  const blobPromise = iosSafari && usdzUrl
+    ? fetch(usdzUrl)
+        .then((response) => (response.ok ? response.blob() : Promise.reject(response.status)))
+        .then((blob) => {
+          // Bu arada başka bir kampanya açıldıysa bu blob'a gerek yok
+          if (usdzBlobPromise !== blobPromise) return null;
+          usdzBlobUrl = URL.createObjectURL(blob);
+          return usdzBlobUrl;
+        })
+        .catch(() => null)
+    : null;
+  usdzBlobPromise = blobPromise;
 
   $("modal-root").innerHTML = `
     <div class="modal-backdrop" role="presentation">
@@ -461,15 +460,18 @@ function openCampaign(slug) {
   const viewer = $("modal-root").querySelector("model-viewer");
   const progress = $("modal-root").querySelector(".model-progress");
   const arButton = $("modal-root").querySelector(".ar-button");
-  arButton.addEventListener("click", () => {
+  arButton.addEventListener("click", async () => {
     if (iOSCihaz && usdzUrl) {
       const originalText = arButton.textContent;
       arButton.textContent = "Açılıyor…";
       arButton.style.opacity = "0.75";
 
+      // Önceden indirilen blob hazırsa onu kullan, iniyorsa bitmesini bekle
+      const blobUrl = usdzBlobPromise ? await usdzBlobPromise : null;
       const anchor = document.createElement("a");
       anchor.rel = "ar";
-      anchor.href = usdzUrl + "#allowsContentScaling=0";
+      anchor.href = (blobUrl || usdzUrl) + "#allowsContentScaling=0";
+      if (blobUrl) anchor.setAttribute("download", "model.usdz");
       const img = document.createElement("img");
       img.src = imgUrl || "";
       anchor.appendChild(img);
@@ -492,10 +494,7 @@ function openCampaign(slug) {
   loadModelViewer().then(() => {
     const ready = () => {
       progress.remove();
-      const arSupported =
-        (iOSCihaz && usdzUrl) ||
-        viewer.canActivateAR ||
-        /Android/.test(navigator.userAgent);
+      const arSupported = (iOSCihaz && usdzUrl) || viewer.canActivateAR;
       if (arSupported) {
         arButton.disabled = false;
         arButton.textContent = t().arReady;
@@ -509,6 +508,9 @@ function openCampaign(slug) {
 function closeCampaign() {
   if (!$("modal-root").firstElementChild) return;
   $("modal-root").innerHTML = "";
+  if (usdzBlobUrl) URL.revokeObjectURL(usdzBlobUrl);
+  usdzBlobUrl = null;
+  usdzBlobPromise = null;
   document.body.classList.remove("modal-open");
   // iOS Safari scroll restore
   const savedScrollY = parseInt(document.body.dataset.scrollY || "0", 10);
@@ -567,6 +569,16 @@ $("menu-search").addEventListener("input", (event) => {
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
 
 // --- Açılış ---
+
+// 3D modelleri cihazda kalıcı önbellekte tut (bkz. sw.js). Menü yüklenmeden önce
+// kaydediyoruz ki ilk ziyarette de model indirmesi SW üzerinden geçsin.
+if ("serviceWorker" in navigator) {
+  try {
+    navigator.serviceWorker
+      .register(new URL("../sw.js", import.meta.url), { scope: new URL("../", import.meta.url).pathname })
+      .catch(() => {});
+  } catch (e) {}
+}
 
 // localStorage'a erişim Private Mode'da Safari'de SecurityError fırlatabilir
 let savedLocale, savedTheme;

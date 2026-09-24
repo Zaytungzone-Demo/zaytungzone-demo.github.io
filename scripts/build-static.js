@@ -54,6 +54,7 @@ copyFileSafe(path.join(rootDir, "login.html"), path.join(publicDir, "login.html"
 copyFileSafe(path.join(rootDir, "login.html"), path.join(loginDir, "index.html"));
 copyFileSafe(path.join(rootDir, "404.html"), path.join(publicDir, "404.html"));
 copyFileSafe(path.join(rootDir, "index.html"), path.join(publicDir, "index.html"));
+copyFileSafe(path.join(rootDir, "sw.js"), path.join(publicDir, "sw.js"));
 
 // 3. JS ve CSS dizinlerini senkronize et
 const copyDirRecursive = (src, dest) => {

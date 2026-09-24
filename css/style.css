@@ -56,11 +56,11 @@ button { color: inherit; } a { color: inherit; } img { display: block; }
 .search-section input { min-width: 0; flex: 1; color: inherit; font-size: 17px; border: 0; outline: 0; background: transparent; }
 /* iOS Safari: input font-size < 16px olursa sayfa zoom yapıyor */
 .search-section input, .search-section input[type="search"] { font-size: max(17px, 1rem); -webkit-appearance: none; appearance: none; }
-.search-section input::placeholder { color: color-mix(in srgb, var(--paper) 55%, transparent); }
+.search-section input::placeholder { color: rgba(243,239,229,.55); color: color-mix(in srgb, var(--paper) 55%, transparent); }
 .search-section button { border: 0; color: inherit; background: transparent; display: grid; place-items: center; padding: 10px; cursor: pointer; }
 .result-count { font-size: 11px; font-weight: 800; white-space: nowrap; opacity: .7; text-transform: uppercase; letter-spacing: .08em; }
 .category-nav { position: -webkit-sticky; position: sticky; z-index: 40; top: 68px; padding: 12px 0; background: rgba(243,239,229,.93); background: color-mix(in srgb, var(--paper) 93%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
-.category-scroll { display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; -ms-overflow-style: none; }
+.category-scroll { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain; scrollbar-width: none; -ms-overflow-style: none; }
 .category-scroll::-webkit-scrollbar { display: none; }
 .category-bar { position: relative; }
 .category-arrow { display: none; }
@@ -100,7 +100,7 @@ button { color: inherit; } a { color: inherit; } img { display: block; }
 .product-title h4 { margin: 0; font: 700 17px/1.15 Georgia,serif; letter-spacing: -.015em; }
 .product-title strong { color: var(--accent); font-size: 15px; white-space: nowrap; }
 .product-copy p { margin: 8px 0 0; color: var(--ink-soft); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.sold-out::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--paper) 35%, transparent); pointer-events: none; }
+.sold-out::after { content: ""; position: absolute; inset: 0; background: rgba(243,239,229,.35); background: color-mix(in srgb, var(--paper) 35%, transparent); pointer-events: none; }
 .sold-out-badge { display: inline-block; margin-top: 7px; padding: 4px 7px; border-radius: 5px; background: var(--accent); color: white; font-size: 10px; font-weight: 900; text-transform: uppercase; }
 .empty-state { min-height: 260px; display: grid; place-content: center; justify-items: center; color: var(--ink-soft); text-align: center; }
 .survey-section { margin-top: 60px; margin-bottom: 70px; padding: 28px; display: grid; gap: 22px; background: var(--accent-2); color: #101820; border-radius: 24px; overflow: hidden; position: relative; }
@@ -140,7 +140,7 @@ model-viewer { display: block; width: 100%; height: 100%; min-height: 240px; --p
 .ar-button { position: absolute; z-index: 2; left: 50%; bottom: 18px; transform: translateX(-50%); min-height: 48px; white-space: nowrap; border: 0; border-radius: 999px; background: var(--accent); color: white; padding: 0 22px; font-weight: 850; box-shadow: 0 8px 24px rgba(0,0,0,.24); }
 .ar-button:disabled { background: var(--navy); opacity: .72; }
 .model-progress { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; font-weight: 800; }
-.model-modal > footer { padding: 16px 20px calc(16px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid var(--line); }
+.model-modal > footer { padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid var(--line); }
 .model-modal > footer > span { color: var(--ink-soft); font-size: 12px; }
 .model-modal > footer div { display: flex; flex-direction: column; text-align: right; }
 .model-modal > footer del { color: var(--ink-soft); font-size: 12px; }
@@ -204,7 +204,7 @@ model-viewer { display: block; width: 100%; height: 100%; min-height: 240px; --p
 .admin-stats span { display: flex; flex-direction: column; gap: 4px; padding: 15px; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
 .admin-stats span + span { border-left: 1px solid var(--line); }
 .admin-stats b { font: 700 25px Georgia,serif; color: var(--accent); }
-.admin-notice { position: sticky; top: 78px; z-index: 20; margin: 14px 0 -10px; padding: 13px 16px; border-radius: 10px; display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 750; box-shadow: var(--shadow); }
+.admin-notice { position: -webkit-sticky; position: sticky; top: 78px; z-index: 20; margin: 14px 0 -10px; padding: 13px 16px; border-radius: 10px; display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 750; box-shadow: var(--shadow); }
 .admin-notice.ok { background: #246b4b; color: white; }.admin-notice.error { background: #9e3124; color: white; }
 .admin-notice button { border: 0; background: transparent; color: inherit; font-size: 20px; cursor: pointer; }
 .campaign-admin, .items-admin { padding-top: 54px; }
@@ -257,7 +257,7 @@ model-viewer { display: block; width: 100%; height: 100%; min-height: 240px; --p
 .icon-btn-danger:hover { background: rgba(226,74,42,.12); transform: scale(1.05); }
 
 .admin-dialog { border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink); padding: 0; width: min(540px, calc(100vw - 32px)); box-shadow: 0 20px 40px rgba(0,0,0,.35); margin: auto; }
-.admin-dialog::backdrop { background: rgba(0,0,0,.65); backdrop-filter: blur(4px); }
+.admin-dialog::backdrop { background: rgba(0,0,0,.65); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
 .admin-dialog-body { padding: 24px 28px; display: grid; gap: 16px; }
 .admin-dialog-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
 .admin-dialog-header h3 { margin: 0; font: 700 24px Georgia, serif; }
